@@ -12,7 +12,7 @@ import Workspace from './components/Workspace.js';
 import Statusbar from './components/Statusbar.js'
 
 class App extends React.Component {
-    constructor(props) {
+    constructor(props) {//wow
         super(props);
 
         // THIS WILL TALK TO LOCAL STORAGE
