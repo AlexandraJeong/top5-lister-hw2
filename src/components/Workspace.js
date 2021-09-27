@@ -65,8 +65,8 @@ export default class Workspace extends React.Component {
                         <div id="edit-items">
                             {currentList.items.map((item, index) => (
                                 <Item 
-                                itemName = {item}
                                 itemId = {index}
+                                currentList = {this.props.currentList}
                                 />
                             ))}
                         </div>
