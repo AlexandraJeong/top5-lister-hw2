@@ -1,21 +1,86 @@
 import React from "react";
 
 export default class Workspace extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            editItemActive: false,
+            itemToEdit: -1,
+            text: "",
+            currentList: this.props.currentList,
+        }
+    }
+    handleClick = (event) => {
+        if (event.detail === 2) {
+            this.handleToggleEdit(event);
+        }
+    }
+
+    handleToggleEdit = (event) => {
+        if(event==null){
+            this.setState({
+                editItemActive: !this.state.editItemActive});
+        }else{
+            this.setState({
+                editItemActive: !this.state.editItemActive,
+                itemToEdit: parseInt(event.currentTarget.id.charAt(event.currentTarget.id.length-1)),
+            });
+        }
+    }
+
+    handleKeyPress = (event) => {
+        if (event.code === "Enter") {
+            this.handleBlur();
+        }
+    }
+
+    handleBlur = () => {
+        const {currentList} = this.props;
+        let textValue = this.state.text;
+        console.log("Item handleBlur: " + textValue);
+        let temp = currentList;
+        temp.items[this.state.itemToEdit]=this.state.text;
+        this.handleToggleEdit();
+        this.props.renameItemCallback(temp);
+    }
+
+    handleUpdate = (event) => {
+        this.setState({ text: event.target.value });
+    }
+
     render() {
         const {currentList} = this.props;
-        let item1 = "";
-        let item2 = "";
-        let item3 = "";
-        let item4 = "";
-        let item5 = "";
         if(currentList){
-            item1=currentList.items[0];
-            item2=currentList.items[1];
-            item3=currentList.items[2];
-            item4=currentList.items[3];
-            item5=currentList.items[4];
-        }
-        return (
+            return (
+                <div id="top5-workspace">
+                    <div id="workspace-edit">
+                        <div id="edit-numbering">
+                            <div className="item-number">1.</div>
+                            <div className="item-number">2.</div>
+                           <div className="item-number">3.</div>
+                            <div className="item-number">4.</div>
+                            <div className="item-number">5.</div>
+                        </div>
+                        <div id="edit-items">
+                            {currentList.items.map((item, index) => (
+                                (this.state.editItemActive)&&(index === this.state.itemToEdit)?
+                                <input
+                                key = {"edit-item-"+index}
+                                id={"list-" + index}
+                                className='top5-item'
+                                type='text'
+                                onKeyPress={this.handleKeyPress}
+                                onBlur={this.handleBlur}
+                                onChange={this.handleUpdate}
+                                defaultValue={""}/>:
+                                <div onClick={this.handleClick} key = {"item-"+index} id = {"item-"+index} className="top5-item">{item}</div>)
+                                )}
+                        </div>
+                    </div>
+                </div>
+            )
+        }else{
+            return( 
             <div id="top5-workspace">
                 <div id="workspace-edit">
                     <div id="edit-numbering">
@@ -25,15 +90,8 @@ export default class Workspace extends React.Component {
                         <div className="item-number">4.</div>
                         <div className="item-number">5.</div>
                     </div>
-                    <div id="edit-items">
-                        <div id = "item-1" className="top5-item">{item1}</div>
-                        <div id = "item-2" className="top5-item">{item2}</div>
-                        <div id = "item-3" className="top5-item">{item3}</div>
-                        <div id = "item-4" className="top5-item">{item4}</div>
-                        <div id = "item-5" className="top5-item">{item5}</div>
-                    </div>
                 </div>
-            </div>
-        )
+            </div>)
+        }
     }
 }
