@@ -1,4 +1,5 @@
 import React from "react";
+import Item from "./Item";
 
 export default class Workspace extends React.Component {
     constructor(props) {
@@ -41,7 +42,7 @@ export default class Workspace extends React.Component {
         let temp = currentList;
         temp.items[this.state.itemToEdit]=this.state.text;
         this.handleToggleEdit();
-        this.props.renameItemCallback(temp);
+        this.props.renameItemCallback(textValue, this.state.itemToEdit);
     }
 
     handleUpdate = (event) => {
@@ -63,18 +64,11 @@ export default class Workspace extends React.Component {
                         </div>
                         <div id="edit-items">
                             {currentList.items.map((item, index) => (
-                                (this.state.editItemActive)&&(index === this.state.itemToEdit)?
-                                <input
-                                key = {"edit-item-"+index}
-                                id={"list-" + index}
-                                className='top5-item'
-                                type='text'
-                                onKeyPress={this.handleKeyPress}
-                                onBlur={this.handleBlur}
-                                onChange={this.handleUpdate}
-                                defaultValue={""}/>:
-                                <div onClick={this.handleClick} key = {"item-"+index} id = {"item-"+index} className="top5-item">{item}</div>)
-                                )}
+                                <Item 
+                                itemName = {item}
+                                itemId = {index}
+                                />
+                            ))}
                         </div>
                     </div>
                 </div>

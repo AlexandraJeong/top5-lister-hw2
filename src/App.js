@@ -71,21 +71,6 @@ class App extends React.Component {
             this.db.mutationCreateList(newList);
         });
     }
-    renameItemCallback = (updatedCurrentList) => {
-        this.setState(prevState => ({
-            currentList: prevState.currentList,
-            sessionData: {
-                nextKey: prevState.sessionData.nextKey,
-                counter: prevState.sessionData.counter,
-                currentList: updatedCurrentList
-                
-            }
-        }), () => {
-            // AN AFTER EFFECT IS THAT WE NEED TO MAKE SURE
-            // THE TRANSACTION STACK IS CLEARED
-            this.db.mutationUpdateSessionData(this.state.sessionData);
-        });
-    }
     renameList = (key, newName) => {
         let newKeyNamePairs = [...this.state.sessionData.keyNamePairs];
         // NOW GO THROUGH THE ARRAY AND FIND THE ONE TO RENAME
