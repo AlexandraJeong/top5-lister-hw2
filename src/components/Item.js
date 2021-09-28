@@ -48,7 +48,7 @@ export default class Item extends React.Component {
             onKeyPress={this.handleKeyPress}
             onBlur={this.handleBlur}
             onChange={this.handleUpdate}
-            defaultValue={""}/>
+            defaultValue={this.props.currentList.items[this.state.itemId]}/>
         }else{
             return <div onClick={this.handleClick} 
             key = {"item-"+this.state.itemId} id = {"item-"+this.state.itemId} 
