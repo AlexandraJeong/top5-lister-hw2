@@ -11,43 +11,6 @@ export default class Workspace extends React.Component {
             currentList: this.props.currentList,
         }
     }
-    handleClick = (event) => {
-        if (event.detail === 2) {
-            this.handleToggleEdit(event);
-        }
-    }
-
-    handleToggleEdit = (event) => {
-        if(event==null){
-            this.setState({
-                editItemActive: !this.state.editItemActive});
-        }else{
-            this.setState({
-                editItemActive: !this.state.editItemActive,
-                itemToEdit: parseInt(event.currentTarget.id.charAt(event.currentTarget.id.length-1)),
-            });
-        }
-    }
-
-    handleKeyPress = (event) => {
-        if (event.code === "Enter") {
-            this.handleBlur();
-        }
-    }
-
-    handleBlur = () => {
-        const {currentList} = this.props;
-        let textValue = this.state.text;
-        console.log("Item handleBlur: " + textValue);
-        let temp = currentList;
-        temp.items[this.state.itemToEdit]=this.state.text;
-        this.handleToggleEdit();
-        this.props.renameItemCallback(textValue, this.state.itemToEdit);
-    }
-
-    handleUpdate = (event) => {
-        this.setState({ text: event.target.value });
-    }
 
     render() {
         const {currentList} = this.props;
@@ -67,6 +30,8 @@ export default class Workspace extends React.Component {
                                 <Item 
                                 itemId = {index}
                                 currentList = {this.props.currentList}
+                                key = {"items-"+index}
+                                renameItemCallback = {this.props.renameItemCallback}
                                 />
                             ))}
                         </div>

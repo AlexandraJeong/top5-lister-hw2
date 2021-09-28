@@ -105,17 +105,25 @@ class App extends React.Component {
         });
     }
     renameItem = (index, newName) => {
-        let items = [...this.state.sessionData.currentList];
+        //console.log(this.state.sessionData);
+        //let items = [...this.state.sessionData.currentList];
+        let items = this.state.currentList.items;
         items[index]=newName;
+        this.setState(prevState => ({
+            currentList: this.state.currentList,
+        }));
+        this.db.mutationUpdateList(this.state.currentList);
     }
     // THIS FUNCTION BEGINS THE PROCESS OF LOADING A LIST FOR EDITING
     loadList = (key) => {
         let newCurrentList = this.db.queryGetList(key);
+        //console.log(newCurrentList);//scrap
         this.setState(prevState => ({
             currentList: newCurrentList,
             sessionData: prevState.sessionData
         }), () => {
-            // ANY AFTER EFFECTS?
+            //console.log(this.state.sessionData.currentList);
+            //this.db.mutationUpdateSessionData(this.state.sessionData);
         });
     }
     // THIS FUNCTION BEGINS THE PROCESS OF CLOSING THE CURRENT LIST
