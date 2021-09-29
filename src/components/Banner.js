@@ -7,7 +7,8 @@ export default class Banner extends React.Component {
         return (
             <div id="top5-banner">
                 {title}
-                <EditToolbar />
+                <EditToolbar 
+                closeCallback = {this.props.closeCallback}/>
             </div>
         );
     }
