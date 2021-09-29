@@ -106,7 +106,6 @@ class App extends React.Component {
         });
     }
     renameItem = (index, newName) => {
-        //console.log(this.state.sessionData);
         //let items = [...this.state.sessionData.currentList];
         let items = this.state.currentList.items;
         if(newName !== ""){
@@ -124,7 +123,6 @@ class App extends React.Component {
             currentList: newCurrentList,
             sessionData: prevState.sessionData
         }), () => {
-            //console.log(this.state.sessionData.currentList);
             //this.db.mutationUpdateSessionData(this.state.sessionData);
         });
     }
@@ -148,10 +146,28 @@ class App extends React.Component {
         this.showDeleteListModal();
     }
 
-    
+    reindexKeyName(){
+        //console.log("wow"+this.state.sessionData.nextKey);
+        for(let i = 0; i < this.state.sessionData.nextKey-1; i++){
+            console.log("renaming "+i);
+            // eslint-disable-next-line
+            this.state.sessionData.keyNamePairs[i]={
+                name: this.state.sessionData.keyNamePairs[i].name,
+                key: i,
+            };
+        }
+        // eslint-disable-next-line
+        this.state.sessionData.nextKey=this.state.sessionData.nextKey-1;
+        this.setState(prevState => ({
+            sessionData: this.state.sessionData,
+        }));
+        //console.log(this.state.sessionData.nextKey);
+        
+    }
 
     deleteListConfirmed = () => {
-        this.state.sessionData.keyNamePairs.splice(this.state.listToDelete.key-1,1);
+        this.state.sessionData.keyNamePairs.splice(this.state.listToDelete.key,1);
+        this.reindexKeyName(this.state.sessionData.keyNamePairs);
         this.setState(prevState => ({
             listToDelete: null,
             sessionData: this.state.sessionData
