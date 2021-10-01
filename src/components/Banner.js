@@ -3,7 +3,7 @@ import EditToolbar from "./EditToolbar";
 
 export default class Banner extends React.Component {
     render() {
-        console.log(this.props.isListOpen);
+        //console.log(this.props.isListOpen);
         const { title} = this.props;
         return (
             <div id="top5-banner">

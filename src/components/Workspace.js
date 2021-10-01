@@ -15,6 +15,9 @@ export default class Workspace extends React.Component {
     render() {
         
         const {currentList} = this.props;
+        if(currentList!=null){
+        console.log(currentList.items);//scrap
+        }
         if(currentList){
             return (
                 <div id="top5-workspace">

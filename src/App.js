@@ -119,6 +119,7 @@ class App extends React.Component {
     // THIS FUNCTION BEGINS THE PROCESS OF LOADING A LIST FOR EDITING
     loadList = (key) => {
         let newCurrentList = this.db.queryGetList(key);
+        this.reindexKeyName();//SCRAP
         this.setState(prevState => ({
             currentList: newCurrentList,
             sessionData: prevState.sessionData
@@ -147,13 +148,10 @@ class App extends React.Component {
     }
 
     reindexKeyName(){
-        for(let i = 0; i < this.state.sessionData.nextKey-1; i++){
+        for(let i = 0; i < this.state.sessionData.keyNamePairs.length; i++){
             //console.log(this.state.sessionData.keyNamePairs[i]);
             // eslint-disable-next-line
-            this.state.sessionData.keyNamePairs[i]={
-                name: this.state.sessionData.keyNamePairs[i].name,
-                key: i,
-            };
+            //console.log(this.db.queryGetList(this.state.sessionData.keyNamePairs[i].key));
         }
         // eslint-disable-next-line
         this.state.sessionData.nextKey=this.state.sessionData.nextKey-1;
@@ -163,17 +161,15 @@ class App extends React.Component {
     }
 //redo id and key
     deleteListConfirmed = () => {
-        this.state.sessionData.keyNamePairs.splice(this.state.listToDelete.key,1);
+        this.closeCurrentList();
+        for(let i=0; i<this.state.sessionData.keyNamePairs.length; i++){
+            if(this.state.sessionData.keyNamePairs[i].key === this.state.listToDelete.key){
+                this.state.sessionData.keyNamePairs.splice(i,1);
+            }
+        }
         // eslint-disable-next-line
         this.state.sessionData.nextKey=this.state.sessionData.nextKey-1;//decrement by 1
-        let keyNamePairs = this.state.sessionData.keyNamePairs;
         this.reindexKeyName();
-        for(let i = 0 ; i< keyNamePairs.length; i++){
-            // eslint-disable-next-line
-            //this.db.queryGetList(keyNamePairs[i].key).id = i;
-            this.db.queryGetList(keyNamePairs[i].key).key = i;
-            console.log(this.db.queryGetList(keyNamePairs[i]));
-        }
         this.setState(prevState => ({
             listToDelete: null,
             sessionData: this.state.sessionData
