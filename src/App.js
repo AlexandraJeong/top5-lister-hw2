@@ -128,7 +128,6 @@ class App extends React.Component {
     }
     // THIS FUNCTION BEGINS THE PROCESS OF CLOSING THE CURRENT LIST
     closeCurrentList = () => {
-        console.log("closing");
         this.setState(prevState => ({
             currentList: null,
             listKeyPairMarkedForDeletion : prevState.listKeyPairMarkedForDeletion,
@@ -148,9 +147,8 @@ class App extends React.Component {
     }
 
     reindexKeyName(){
-        //console.log("wow"+this.state.sessionData.nextKey);
         for(let i = 0; i < this.state.sessionData.nextKey-1; i++){
-            console.log("renaming "+i);
+            //console.log(this.state.sessionData.keyNamePairs[i]);
             // eslint-disable-next-line
             this.state.sessionData.keyNamePairs[i]={
                 name: this.state.sessionData.keyNamePairs[i].name,
@@ -162,13 +160,20 @@ class App extends React.Component {
         this.setState(prevState => ({
             sessionData: this.state.sessionData,
         }));
-        //console.log(this.state.sessionData.nextKey);
-        
     }
-
+//redo id and key
     deleteListConfirmed = () => {
         this.state.sessionData.keyNamePairs.splice(this.state.listToDelete.key,1);
-        this.reindexKeyName(this.state.sessionData.keyNamePairs);
+        // eslint-disable-next-line
+        this.state.sessionData.nextKey=this.state.sessionData.nextKey-1;//decrement by 1
+        let keyNamePairs = this.state.sessionData.keyNamePairs;
+        this.reindexKeyName();
+        for(let i = 0 ; i< keyNamePairs.length; i++){
+            // eslint-disable-next-line
+            //this.db.queryGetList(keyNamePairs[i].key).id = i;
+            this.db.queryGetList(keyNamePairs[i].key).key = i;
+            console.log(this.db.queryGetList(keyNamePairs[i]));
+        }
         this.setState(prevState => ({
             listToDelete: null,
             sessionData: this.state.sessionData
@@ -193,7 +198,8 @@ class App extends React.Component {
             <div id="app-root">
                 <Banner 
                     title='Top 5 Lister'
-                    closeCallback={this.closeCurrentList} />
+                    closeCallback={this.closeCurrentList} 
+                    isListOpen={this.state.currentList!==null}/>
                 <Sidebar
                     heading='Your Lists'
                     currentList={this.state.currentList}

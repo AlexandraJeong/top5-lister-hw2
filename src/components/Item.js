@@ -28,9 +28,8 @@ export default class Item extends React.Component {
     }
     handleBlur = () => {
         let textValue = this.state.text;
-        console.log("Item handleBlur: " + textValue);
+        //console.log("Item handleBlur: " + textValue);
         this.handleToggleEdit();
-        //console.log(this.props.currentList);
         this.props.renameItemCallback(this.state.itemId, textValue);
     }
 
