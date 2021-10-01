@@ -27,6 +27,7 @@ export default class Workspace extends React.Component {
         this.setState({
             currentList: list
         });
+        this.props.saveListCallback(this.props.currentList);
     }
 
     render() {

@@ -28,7 +28,9 @@ class App extends React.Component {
             listToDelete: null,
         }
     }
-
+    saveList = (list) =>{
+        this.db.mutationUpdateList(list);
+    }
     sortKeyNamePairsByName = (keyNamePairs) => {
         keyNamePairs.sort((keyPair1, keyPair2) => {
             // GET THE LISTS
@@ -203,6 +205,7 @@ class App extends React.Component {
                     renameListCallback={this.renameList}
                 />
                 <Workspace
+                    saveListCallback={this.saveList}
                     currentList={this.state.currentList}
                     renameItemCallback={this.renameItem} />
                 <Statusbar 

@@ -8,6 +8,7 @@ export default class Item extends React.Component {
             itemId: this.props.itemId,
             editItemActive: false,
             text: "",
+            hovering: false,
         }
     }
 
@@ -28,6 +29,7 @@ export default class Item extends React.Component {
     }
     handleBlur = () => {
         let textValue = this.state.text;
+        
         //console.log("Item handleBlur: " + textValue);
         this.handleToggleEdit();
         this.props.renameItemCallback(this.state.itemId, textValue);
@@ -40,24 +42,29 @@ export default class Item extends React.Component {
     handleOnDrop = (ev) =>{
         ev.preventDefault();
         this.props.swapItemCallback(this.state.itemId);
-        //console.log(this.state.itemId);
-        //this.props.swapItems(event,)
+        this.handleDragLeave();
     }
 
     handleDragStart = (ev) =>{
-        //ev.preventDefault();
         this.props.startIndexCallback(this.state.itemId);
-        //console.log("started");
-        //console.log(ev);
-
     }
-    handleDragOver = (ev) =>{//ev is what mouse is hovering over
+
+    handleDragEnter = (ev) =>{//ev is what mouse is hovering over
         console.log(this.state.itemId);
+        this.setState({
+            hovering: true
+        }); 
+    }
+    handleDragOver = (ev) =>{
         ev.preventDefault();
         ev.stopPropagation();
-        //console.log(ev);
     }
 
+    handleDragLeave = (ev) =>{
+        this.setState({
+            hovering: false
+        });
+    }
     render(){
         if(this.state.editItemActive){
             return <input
@@ -72,11 +79,14 @@ export default class Item extends React.Component {
         }else{
             return <div onClick={this.handleClick} 
             onDrop = {this.handleOnDrop}
-            onDragStart = {this.handleDragStart}
             onDragOver = {this.handleDragOver}
+            onDragStart = {this.handleDragStart}
+            onDragEnter = {this.handleDragEnter}
+            onDragLeave = {this.handleDragLeave}
             draggable = {true}
             key = {"item-"+this.state.itemId} id = {"item-"+this.state.itemId} 
-            className="top5-item">{this.props.currentList.items[this.state.itemId]}</div>;
+            className={this.state.hovering?"top5-item-dragged-to":"top5-item"}>
+            {this.props.currentList.items[this.state.itemId]}</div>;
         }
     }
 }

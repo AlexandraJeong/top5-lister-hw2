@@ -112,6 +112,14 @@ body {
   overflow: scroll;
 }
 
+.top5-item-hovering{
+    background-color: green;
+    display:flex;
+    align-items: center;
+    font-size: 24pt;
+    height:20%;
+}
+
 .list-card, .selected-list-card, .unselected-list-card {
   font-size: 18pt;
   margin: 10px;
@@ -163,7 +171,6 @@ body {
   color: black;
   cursor: pointer;
 }
-
 
 .top5-button:hover {
   cursor: pointer;
