@@ -28,6 +28,7 @@ class App extends React.Component {
             listToDelete: null,
         }
     }
+
     sortKeyNamePairsByName = (keyNamePairs) => {
         keyNamePairs.sort((keyPair1, keyPair2) => {
             // GET THE LISTS
@@ -70,6 +71,7 @@ class App extends React.Component {
             // PUTTING THIS NEW LIST IN PERMANENT STORAGE
             // IS AN AFTER EFFECT
             this.db.mutationCreateList(newList);
+            this.db.mutationUpdateSessionData(this.state.sessionData);
         });
     }
     renameList = (key, newName) => {
@@ -119,7 +121,7 @@ class App extends React.Component {
     // THIS FUNCTION BEGINS THE PROCESS OF LOADING A LIST FOR EDITING
     loadList = (key) => {
         let newCurrentList = this.db.queryGetList(key);
-        this.reindexKeyName();//SCRAP
+        //this.reindexKeyName();//SCRAP
         this.setState(prevState => ({
             currentList: newCurrentList,
             sessionData: prevState.sessionData
@@ -148,11 +150,6 @@ class App extends React.Component {
     }
 
     reindexKeyName(){
-        for(let i = 0; i < this.state.sessionData.keyNamePairs.length; i++){
-            //console.log(this.state.sessionData.keyNamePairs[i]);
-            // eslint-disable-next-line
-            //console.log(this.db.queryGetList(this.state.sessionData.keyNamePairs[i].key));
-        }
         // eslint-disable-next-line
         this.state.sessionData.nextKey=this.state.sessionData.nextKey-1;
         this.setState(prevState => ({
@@ -168,8 +165,8 @@ class App extends React.Component {
             }
         }
         // eslint-disable-next-line
-        this.state.sessionData.nextKey=this.state.sessionData.nextKey-1;//decrement by 1
-        this.reindexKeyName();
+        //this.state.sessionData.nextKey=this.state.sessionData.nextKey-1;//decrement by 1
+        //this.reindexKeyName();
         this.setState(prevState => ({
             listToDelete: null,
             sessionData: this.state.sessionData

@@ -5,6 +5,7 @@ export default class Workspace extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            swapIndex: -1,
             editItemActive: false,
             itemToEdit: -1,
             text: "",
@@ -12,12 +13,24 @@ export default class Workspace extends React.Component {
         }
     }
 
+    setStartIndex = (index) =>{
+        this.setState({
+            swapIndex: index
+        });
+    }
+
+    swapItem = (dropIndex) => {
+        let list = this.props.currentList;
+        let temp = list.items[dropIndex];
+        list.items[dropIndex] = list.items[this.state.swapIndex];
+        list.items[this.state.swapIndex]=temp;
+        this.setState({
+            currentList: list
+        });
+    }
+
     render() {
-        
         const {currentList} = this.props;
-        if(currentList!=null){
-        console.log(currentList.items);//scrap
-        }
         if(currentList){
             return (
                 <div id="top5-workspace">
@@ -36,6 +49,8 @@ export default class Workspace extends React.Component {
                                 currentList = {this.props.currentList}
                                 key = {"items-"+index}
                                 renameItemCallback = {this.props.renameItemCallback}
+                                swapItemCallback = {this.swapItem}
+                                startIndexCallback = {this.setStartIndex}
                                 />
                             ))}
                         </div>

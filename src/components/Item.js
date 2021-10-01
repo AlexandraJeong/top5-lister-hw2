@@ -37,6 +37,27 @@ export default class Item extends React.Component {
         this.setState({ text: event.target.value });
     }
 
+    handleOnDrop = (ev) =>{
+        ev.preventDefault();
+        this.props.swapItemCallback(this.state.itemId);
+        //console.log(this.state.itemId);
+        //this.props.swapItems(event,)
+    }
+
+    handleDragStart = (ev) =>{
+        //ev.preventDefault();
+        this.props.startIndexCallback(this.state.itemId);
+        //console.log("started");
+        //console.log(ev);
+
+    }
+    handleDragOver = (ev) =>{//ev is what mouse is hovering over
+        console.log(this.state.itemId);
+        ev.preventDefault();
+        ev.stopPropagation();
+        //console.log(ev);
+    }
+
     render(){
         if(this.state.editItemActive){
             return <input
@@ -50,6 +71,10 @@ export default class Item extends React.Component {
             defaultValue={this.props.currentList.items[this.state.itemId]}/>
         }else{
             return <div onClick={this.handleClick} 
+            onDrop = {this.handleOnDrop}
+            onDragStart = {this.handleDragStart}
+            onDragOver = {this.handleDragOver}
+            draggable = {true}
             key = {"item-"+this.state.itemId} id = {"item-"+this.state.itemId} 
             className="top5-item">{this.props.currentList.items[this.state.itemId]}</div>;
         }
