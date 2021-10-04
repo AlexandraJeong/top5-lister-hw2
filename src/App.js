@@ -225,7 +225,20 @@ class App extends React.Component {
         this.setState({});
     }
 
+    componentDidMount(){
+        document.addEventListener("keydown", this.checkUndoRedo)
+    }
+
+    checkUndoRedo = (event) =>{
+        if(event.ctrlKey && event.key === 'z')
+            this.state.tps.undoTransaction();
+        if(event.key === 'y'&& event.ctrlKey)
+            this.state.tps.doTransaction();
+        this.setState({});
+    }
+
     render() {
+
         let hasUndo = this.state.tps.hasTransactionToUndo();
         let hasRedo = this.state.tps.hasTransactionToRedo();
         //console.log(hasUndo);
