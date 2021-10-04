@@ -1,5 +1,7 @@
 import React from "react";
 import Item from "./Item";
+import MoveItem_Transaction from "../MoveItem_Transaction";
+//import jsTPS from "./transactions/jsTPS.js"
 
 export default class Workspace extends React.Component {
     constructor(props) {
@@ -18,14 +20,19 @@ export default class Workspace extends React.Component {
             swapIndex: index
         });
     }
-
-    swapItem = (dropIndex) => {
+    swapItemHelper(index1, index2){
         let list = this.props.currentList;
-        let temp = list.items[dropIndex];
-        list.items[dropIndex] = list.items[this.state.swapIndex];
-        list.items[this.state.swapIndex]=temp;
+        let temp = list.items[index1];
+        list.items[index1] = list.items[index2];
+        list.items[index2]=temp;
+    }
+    swapItem = (dropIndex) => {
+        if(dropIndex !== this.state.swapIndex){
+            let transaction = new MoveItem_Transaction(this, this.state.swapIndex, dropIndex);
+            this.props.addMoveCallback(transaction);
+        }
         this.setState({
-            currentList: list
+            swapIndex: -1
         });
         this.props.saveListCallback(this.props.currentList);
     }

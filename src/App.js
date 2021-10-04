@@ -1,5 +1,8 @@
 import React from 'react';
 import './App.css';
+import ChangeItem_Transaction from "./ChangeItem_Transaction";
+import jsTPS from "./jsTPS";
+
 
 // IMPORT DATA MANAGEMENT AND TRANSACTION STUFF
 import DBManager from './db/DBManager';
@@ -17,12 +20,13 @@ class App extends React.Component {
 
         // THIS WILL TALK TO LOCAL STORAGE
         this.db = new DBManager();
-
+        //this.tps = new jsTPS();
         // GET THE SESSION DATA FROM OUR DATA MANAGER
         let loadedSessionData = this.db.queryGetSessionData();
 
         // SETUP THE INITIAL STATE
         this.state = {
+            tps: new jsTPS(),
             currentList : null,
             sessionData : loadedSessionData,
             listToDelete: null,
@@ -103,36 +107,48 @@ class App extends React.Component {
         }), () => {
             // AN AFTER EFFECT IS THAT WE NEED TO MAKE SURE
             // THE TRANSACTION STACK IS CLEARED
+            this.closeCurrentList();
             let list = this.db.queryGetList(key);
             list.name = newName;
             this.db.mutationUpdateList(list);
             this.db.mutationUpdateSessionData(this.state.sessionData);
         });
     }
-    renameItem = (index, newName) => {
-        //let items = [...this.state.sessionData.currentList];
-        let items = this.state.currentList.items;
-        if(newName !== ""){
-            items[index]=newName;
-        }
+    renameItemHelper(index,newName){
+        // eslint-disable-next-line
+        this.state.currentList.items[index]=newName;
         this.setState(prevState => ({
             currentList: this.state.currentList,
         }));
+    }
+    renameItem = (index, newName) => {
+        let items = this.state.currentList.items;
+        if(newName !== ""){
+            //items[index]=newName;
+            let transaction = new ChangeItem_Transaction(this, index, items[index], newName);
+            this.state.tps.addTransaction(transaction);
+        }
         this.db.mutationUpdateList(this.state.currentList);
     }
     // THIS FUNCTION BEGINS THE PROCESS OF LOADING A LIST FOR EDITING
     loadList = (key) => {
         let newCurrentList = this.db.queryGetList(key);
-        //this.reindexKeyName();//SCRAP
-        this.setState(prevState => ({
-            currentList: newCurrentList,
-            sessionData: prevState.sessionData
-        }), () => {
-            //this.db.mutationUpdateSessionData(this.state.sessionData);
-        });
+        let oldKey = 0;
+        if(this.state.currentList!==null){
+            oldKey = this.state.currentList.key;
+        }
+        if(oldKey!==key){
+            this.state.tps.clearAllTransactions();    
+            this.setState(prevState => ({
+                currentList: newCurrentList,
+                sessionData: prevState.sessionData
+            }), () => {
+            });
+        }
     }
     // THIS FUNCTION BEGINS THE PROCESS OF CLOSING THE CURRENT LIST
     closeCurrentList = () => {
+        this.state.tps.clearAllTransactions();
         this.setState(prevState => ({
             currentList: null,
             listKeyPairMarkedForDeletion : prevState.listKeyPairMarkedForDeletion,
@@ -188,13 +204,41 @@ class App extends React.Component {
         let modal = document.getElementById("delete-modal");
         modal.classList.remove("is-visible");
     }
+
+    undo = () => {
+        if(this.state.tps.hasTransactionToUndo()){
+            this.state.tps.undoTransaction();
+            this.setState({});
+        }
+    }
+
+    redo = () => {
+        if(this.state.tps.hasTransactionToRedo()){
+            this.state.tps.doTransaction();
+            this.setState({});
+        }
+    }
+
+    addTransaction = (transaction) =>{
+        this.state.tps.addTransaction(transaction);
+        //console.log(this.state.tps.hasTransactionToUndo());
+        this.setState({});
+    }
+
     render() {
+        let hasUndo = this.state.tps.hasTransactionToUndo();
+        let hasRedo = this.state.tps.hasTransactionToRedo();
+        //console.log(hasUndo);
         return (
             <div id="app-root">
                 <Banner 
                     title='Top 5 Lister'
                     closeCallback={this.closeCurrentList} 
-                    isListOpen={this.state.currentList!==null}/>
+                    undoCallback={this.undo}
+                    redoCallback={this.redo}
+                    isListOpen={this.state.currentList!==null}
+                    hasUndo = {hasUndo}
+                    hasRedo = {hasRedo}/>
                 <Sidebar
                     heading='Your Lists'
                     currentList={this.state.currentList}
@@ -203,11 +247,14 @@ class App extends React.Component {
                     deleteListCallback={this.deleteList}
                     loadListCallback={this.loadList}
                     renameListCallback={this.renameList}
+
                 />
                 <Workspace
+                    tps = {this.state.tps}
                     saveListCallback={this.saveList}
                     currentList={this.state.currentList}
-                    renameItemCallback={this.renameItem} />
+                    renameItemCallback={this.renameItem} 
+                    addMoveCallback = {this.addTransaction}/>
                 <Statusbar 
                     currentList={this.state.currentList} />
                 <DeleteModal

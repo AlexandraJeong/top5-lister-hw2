@@ -50,7 +50,7 @@ export default class Item extends React.Component {
     }
 
     handleDragEnter = (ev) =>{//ev is what mouse is hovering over
-        console.log(this.state.itemId);
+        //console.log(this.state.itemId);
         this.setState({
             hovering: true
         }); 
